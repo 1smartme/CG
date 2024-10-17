@@ -1,0 +1,61 @@
+#include <iostream>
+using namespace std;
+
+struct obj {
+    double profit;
+    double weight;
+    double ratio;
+};
+
+void input(obj arr[], int n) {
+    for (int i = 0; i < n; i++) {
+        cout << "\nEnter weight: ";
+        cin >> arr[i].weight;
+        cout << "Enter profit: ";
+        cin >> arr[i].profit;
+        arr[i].ratio = arr[i].profit / arr[i].weight;
+    }
+}
+
+void sort(obj arr[], int n) {
+    for (int i = 0; i < n - 1; i++) {
+        for (int j = 0; j < n - i - 1; j++) {
+            if (arr[j].ratio < arr[j + 1].ratio) {
+                swap(arr[j], arr[j + 1]);
+            }
+        }
+    }
+}
+
+double getMaxProfit(obj arr[], int n, int w) {
+    sort(arr, n);
+    double totalProfit = 0.0;
+    int remainingWeight = w;
+
+    for (int i = 0; i < n; i++) {
+        if (remainingWeight >= arr[i].weight) {
+            totalProfit += arr[i].profit;
+            remainingWeight -= arr[i].weight;
+        } else {
+            totalProfit += arr[i].ratio * remainingWeight;
+            break;
+        }
+    }
+    return totalProfit;
+}
+
+int main() {
+    int n, w;
+    cout << "Enter number of objects: ";
+    cin >> n;
+    cout << "Enter total bag weight: ";
+    cin >> w;
+    
+    obj arr[n];
+    input(arr, n);
+    
+    double maxProfit = getMaxProfit(arr, n, w);
+    cout << "\nMaximum profit: " << maxProfit << endl;
+
+    return 0;
+}
