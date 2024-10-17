@@ -1,0 +1,58 @@
+#include <iostream>
+#include <vector>
+#include <climits>
+
+using namespace std;
+
+// Structure to represent an edge between two nodes
+struct Edge {
+    int src, dest, weight;
+};
+
+// Function to perform the Bellman-Ford algorithm
+void bellmanFord(int vertices, const vector<Edge>& edgeList, int source) {
+    vector<int> distance(vertices, INT_MAX);
+    distance[source] = 0; // Distance to the source is 0
+
+    // Relax all edges |V| - 1 times
+    for (int i = 0; i < vertices - 1; i++) {
+        for (const auto& edge : edgeList) {
+            if (distance[edge.src] != INT_MAX && distance[edge.src] + edge.weight < distance[edge.dest]) {
+                distance[edge.dest] = distance[edge.src] + edge.weight;
+            }
+        }
+    }
+
+    // Check for negative-weight cycles
+    for (const auto& edge : edgeList) {
+        if (distance[edge.src] != INT_MAX && distance[edge.src] + edge.weight < distance[edge.dest]) {
+            cout << "Graph contains a negative weight cycle!" << endl;
+            return;
+        }
+    }
+
+    // Output the shortest distances from the source to all vertices
+    cout << "Vertex distances from source " << source << ":\n";
+    for (int i = 0; i < vertices; i++) {
+        cout << "Vertex " << i << ": " << (distance[i] == INT_MAX ? "Infinity" : to_string(distance[i])) << "\n";
+    }
+}
+
+int main() {
+    int vertices, edges;
+    cout << "Enter the number of vertices and edges: ";
+    cin >> vertices >> edges;
+
+    vector<Edge> edgeList(edges);
+    cout << "Enter each edge as source, destination, weight:\n";
+    for (auto& edge : edgeList) {
+        cin >> edge.src >> edge.dest >> edge.weight;
+    }
+
+    int source;
+    cout << "Enter the source vertex: ";
+    cin >> source;
+
+    bellmanFord(vertices, edgeList, source);
+    return 0;
+}
